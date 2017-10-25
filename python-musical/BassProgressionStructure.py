@@ -18,76 +18,69 @@ chords = [[],
 		  [Note("B3"),Note("D4"),Note("F4")],
 		  [Note("C4"),Note("E4"),Note("G4")],
 		  ]
-bassNote = bassProgression
 
+
+key = bassProgression[0]
+scale = Scale(key, 'major')
+
+second = scale.transpose(key, 1)
+third = scale.transpose(key, 2)
+fourth = scale.transpose(key, 3)
+sixth = scale.transpose(key, 5)
+seventh = scale.transpose(key, 6)
+octave = scale.transpose(key, 7)
 
 for x in range(0,8):
 	
 	timeline.add(x*.5,Hit(bassProgression[x],1))
+	bassNote = bassProgression[x]
+
+	
 	
 
-time = 0.0
+	time = 0.0
 
-def getChord(inputNote):
-	returnChord = []
+	def nextNote(inputNote):
 
-	print inputNote.note
-
-	if inputNote.note == "c":
-		returnChord = chords[1]
-	elif inputNote.note == "d":
-		returnChord = chords[2]
-	elif inputNote.note == "e":
-		returnChord = chords[3]
-	elif inputNote.note == "f":
-		returnChord = chords[4]
-	elif inputNote.note == "g":
-		returnChord = chords[5]
-	elif inputNote.note == "a":
-		returnChord = chords[6]
-	else:
-		returnChord = chords[7]
 	
-	return returnChord
+		if inputNote.note == "c":
+			afterNote = "b%i" % (inputNote.octave - 1)
+			afterNote = "d%i" % (inputNote.octave) 
+		elif inputNote.note == "d":
+			 afterNote = "c%i" % (inputNote.octave)
+			 afterNote = "e%i" % (inputNote.octave) 
+		elif inputNote.note == "e":
+			 afterNote = "d%i" % (inputNote.octave)
+			 afterNote = "f%i" % (inputNote.octave) 
+		elif inputNote.note == "f":
+			 afterNote = "e%i" % (inputNote.octave)
+			 afterNote = "g%i" % (inputNote.octave) 
+		elif inputNote.note == "g":
+			 afterNote = "f%i" % (inputNote.octave)
+			 afterNote = "a%i" % (inputNote.octave) 
+		elif inputNote.note == "a":
+			 afterNote = "g%i" % (inputNote.octave)
+			 afterNote = "b%i" % (inputNote.octave) 
+		else:
+			 afterNote = "a%i" % (inputNote.octave)
+			 afterNote = "c%i" % (inputNote.octave + 1) 
 
-def getAdjacentNotes(inputNote):
-
-	if inputNote.note == "c":
-		noteBelow = "b%i" % (inputNote.octave - 1)
-		noteAbove = "d%i" % (inputNote.octave) 
-	elif inputNote.note == "d":
-		noteBelow = "c%i" % (inputNote.octave)
-		noteAbove = "e%i" % (inputNote.octave) 
-	elif inputNote.note == "e":
-		noteBelow = "d%i" % (inputNote.octave)
-		noteAbove = "f%i" % (inputNote.octave) 
-	elif inputNote.note == "f":
-		noteBelow = "e%i" % (inputNote.octave)
-		noteAbove = "g%i" % (inputNote.octave) 
-	elif inputNote.note == "g":
-		noteBelow = "f%i" % (inputNote.octave)
-		noteAbove = "a%i" % (inputNote.octave) 
-	elif inputNote.note == "a":
-		noteBelow = "g%i" % (inputNote.octave)
-		noteAbove = "b%i" % (inputNote.octave) 
-	else:
-		noteBelow = "a%i" % (inputNote.octave)
-		noteAbove = "c%i" % (inputNote.octave + 1) 
-
-	return [Note(noteBelow),Note(noteAbove)]
+		return Note(afterNote)
 
 melodyArray = []
 
 bassNote = bassProgression[x]
 
-melodyArray.append(random.choice(getChord(bassNote)))
+melodyArray.append(bassNote)
 
 #Definte Melody Array
 for x in range(1,16):
-    melodyArray.append(random.choice(getAdjacentNotes(melodyArray[x-1])))
+    melodyArray.append(nextNote(melodyArray[x-1]))
+
 
 time = 0.0
 #Populate Timeline
+
 for note in melodyArray:
     timeline.add(time,Hit(note,0.25))
 
