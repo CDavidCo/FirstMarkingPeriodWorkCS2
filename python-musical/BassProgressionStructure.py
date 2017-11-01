@@ -8,7 +8,7 @@ from timeline import Hit, Timeline
 timeline = Timeline()
 debug = False
 
-bassProgression = [Note("C2"), Note("D2"), Note("F2"),Note("E2"),Note("F2"),Note("G2"),Note("A2"), Note("G2"),Note("E2"),Note("D2"), Note("C2")]
+bassArray = []
 
 chordLetters = {
 	"c" : ["c","e","g"],
@@ -20,15 +20,9 @@ chordLetters = {
 	"b" : ["b","d","f"]
 }
 
-key = bassProgression[0]
+key = Note("C3")
 scale = Scale(key, 'major')
 
-second = scale.transpose(key, 1)
-third = scale.transpose(key, 2)
-fourth = scale.transpose(key, 3)
-sixth = scale.transpose(key, 5)
-seventh = scale.transpose(key, 6)
-octave = scale.transpose(key, 7)
 
 def returnChord(note):
 	return([scale.transpose(note,2),scale.transpose(note,0)])
@@ -36,6 +30,8 @@ def returnChord(note):
 def nextNote(prevNote, bassNote):
 	#if 'c' chordNotes is set to [Note("C3"),Note("E3"),Note("G3")]
 	chordNotes = chordLetters[bassNote.note]
+	print(chordNotes
+		)
 	possibleNext = []
 
 	possibleNext.append(scale.transpose(prevNote,1))
@@ -90,25 +86,24 @@ def nextBassNote(inputNote):
 
 
 for w in range(0,22):
-	
-	if (w) % 2 == 0:
-	
-		timeline.add((w/2)*.5,Hit(bassProgression[w/2],1))
-		bassNote = bassProgression[w/2]
-
-
-	bassNote = bassProgression[w/2]
-
 	if w == 0:
 		melodyArray = []
-		melodyArray.append(Note(scale.transpose(bassNote,9)))
 		bassArray = []
 		bassArray.append(Note("C2"))
+		melodyArray.append(Note(scale.transpose(bassArray[0],9)))
+		
+
+	if (w % 2 == 0):
+
+		timeline.add((w/2)*.5,Hit(bassArray[w/2],1))
+		bassNote = bassArray[w/2]
+
+	
 	
 	#Define Melody Array
-	bassArray.append(nextBassNote (bassArray[w-1]))
+	bassArray.append(nextBassNote(bassArray[w/2-1]))
 
-	melodyArray.append(nextNote(melodyArray[w-1],bassProgression[w%2]))
+	melodyArray.append(nextNote(melodyArray[w-1],bassArray[w%2]))
 	
 
 
@@ -119,19 +114,8 @@ for note in melodyArray:
 
 	timeline.add(time,Hit(note,0.25))
 
-	if (time*100) % 50 == 0:
-  		timeline.add(time,Hit(note,0.5))
-
    	time += 0.25
 
-for note in bassArray:
-
-	timeline.add(time,Hit(note,0.50))
-
-	if (time*200) % 100 == 0:
-  		timeline.add(time,Hit(note,0.5))
-
-   	time += 0.25
 
 data = timeline.render()
 
